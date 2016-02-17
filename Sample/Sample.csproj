@@ -50,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WindowsInstallerNET\WindowsInstallerNET.csproj">
+    <ProjectReference Include="..\MSINet\MSINet.csproj">
       <Project>{c8b7049c-907f-47d0-b142-1a817a9930a0}</Project>
-      <Name>WindowsInstallerNET</Name>
+      <Name>MSINet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

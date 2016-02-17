@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace WindowsInstallerNET
+namespace MSINet
 {
     [Serializable]
     internal class MSIException : Exception

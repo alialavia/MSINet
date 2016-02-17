@@ -7,8 +7,8 @@
     <ProjectGuid>{C8B7049C-907F-47D0-B142-1A817A9930A0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WindowsInstallerNET</RootNamespace>
-    <AssemblyName>WindowsInstallerNET</AssemblyName>
+    <RootNamespace>MSINet</RootNamespace>
+    <AssemblyName>MSINet</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,7 +43,7 @@
     <Compile Include="InstalledProduct.cs" />
     <Compile Include="InstallProperty.cs" />
     <Compile Include="MSIException.cs" />
-    <Compile Include="WindowsInstallerNET.cs" />
+    <Compile Include="MSI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
