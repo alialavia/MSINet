@@ -1,6 +1,7 @@
 ﻿using MSINet.Interop;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace MSINet
@@ -21,13 +22,13 @@ namespace MSINet
         public string HelpTelephone => TryGetProperty(InstallPropertyNames.HelpTelephone);
         public string InstallLocation => TryGetProperty(InstallPropertyNames.InstallLocation);
         public string InstallSource => TryGetProperty(InstallPropertyNames.InstallSource);
-        public string InstallDate => TryGetProperty(InstallPropertyNames.InstallDate);
+        public DateTime? InstallDate => GetPropertyAsOrDefault<DateTime?>(InstallPropertyNames.InstallDate, (value) => DateTime.ParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture), null);
         public string Publisher => TryGetProperty(InstallPropertyNames.Publisher);
         public string LocalPackage => TryGetProperty(InstallPropertyNames.LocalPackage);
         public string URLInfoAbout => TryGetProperty(InstallPropertyNames.URLInfoAbout);
         public string URLUpdateInfo => TryGetProperty(InstallPropertyNames.URLUpdateInfo);
-        public string VersionMinor => TryGetProperty(InstallPropertyNames.VersionMinor);
-        public string VersionMajor => TryGetProperty(InstallPropertyNames.VersionMajor);
+        public int? VersionMinor => GetPropertyAsOrDefault<int?>(InstallPropertyNames.VersionMinor, (value) => int.Parse(value, CultureInfo.InvariantCulture), null);
+        public int? VersionMajor => GetPropertyAsOrDefault<int?>(InstallPropertyNames.VersionMajor, (value) => int.Parse(value, CultureInfo.InvariantCulture), null);
         public string ProductID => TryGetProperty(InstallPropertyNames.ProductID);
         public string RegCompany => TryGetProperty(InstallPropertyNames.RegCompany);
         public string RegOwner => TryGetProperty(InstallPropertyNames.RegOwner);
@@ -74,6 +75,14 @@ namespace MSINet
             if (MSI.TryGetProperty(_guid, propertyName, out propertyValue) != MsiExitCodes.Success)
                 propertyValue = null;
             return propertyValue;
+        }
+
+        public T GetPropertyAsOrDefault<T>(string propertyName, Func<string, T> process, T defaultValue)
+        {
+            string value = TryGetProperty(propertyName);
+            if (string.IsNullOrEmpty(value))
+                return defaultValue;
+            return process(value);
         }
     }
 }
