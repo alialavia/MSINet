@@ -7,14 +7,14 @@ namespace MSINet
 {
     public class InstalledProduct
     {
-        public InstalledProduct(String guid)
+        public InstalledProduct(Guid guid)
         {
             _guid = guid;
         }
 
-        private readonly string _guid;
+        private readonly Guid _guid;
         
-        public string GUID => _guid;
+        public Guid GUID => _guid;
         public string InstalledProductName => TryGetProperty(InstallPropertyNames.InstalledProductName);
         public string VersionString => TryGetProperty(InstallPropertyNames.VersionString);
         public string HelpLink => TryGetProperty(InstallPropertyNames.HelpLink);
