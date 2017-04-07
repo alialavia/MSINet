@@ -39,18 +39,56 @@ namespace MSINet
         /// <exception cref="MSIException">Throws MSIException if reading property was not successful</exception>
         public static String GetProperty(string productGUID, string propertyName)
         {
+            String propertyValue;
+            MsiExitCodes returnValue = TryGetProperty(productGUID, propertyName, out propertyValue);
+            if (returnValue != MsiExitCodes.Success)
+                throw new MSIException(returnValue);
+            return propertyValue;
+        }
+
+        /// <summary>
+        /// Tries to get a product indicated by GUID.
+        /// </summary>
+        /// <param name="productGUID">Product GUID</param>
+        /// <param name="propertyName">Property name</param>
+        /// <param name="propertyValue">Property value or if not available - <c>null</c>.</param>
+        /// <returns>MSI exit code</returns>
+        public static MsiExitCodes TryGetProperty(string productGUID, string propertyName, out string propertyValue)
+        {
             int len = 0;
             // Get the data len
-            MsiInterop.MsiGetProductInfo(productGUID, propertyName, null, ref len);
+            MsiExitCodes returnValue = MsiInterop.MsiGetProductInfo(productGUID, propertyName, null, ref len);
+            if (returnValue != MsiExitCodes.Success)
+            {
+                propertyValue = null;
+                return returnValue;
+            }
 
             // increase for the terminating \0
             len++;
-            String propertyValue = new string(new char[len]);
-            MsiExitCodes returnValue = MsiInterop.MsiGetProductInfo(productGUID, propertyName, propertyValue, ref len);
-            if (returnValue != 0)
-                throw new MSIException(returnValue);
+            propertyValue = new string(new char[len]);
+            returnValue = MsiInterop.MsiGetProductInfo(productGUID, propertyName, propertyValue, ref len);
+            if (returnValue != MsiExitCodes.Success)
+            {
+                propertyValue = null;
+                return returnValue;
+            }
 
-            return propertyValue;
+            return MsiExitCodes.Success;
+        }
+
+        /// <summary>
+        /// Checks if the product identified by the given <paramref name="productGUID"/> contains the property
+        /// identified by <paramref name="propertyName"/>.
+        /// </summary>
+        /// <param name="productGUID">Product GUID</param>
+        /// <param name="propertyName">Property name</param>
+        /// <returns>True, if the Product contains this property, otherwise - false.</returns>
+        public static bool ContainsProperty(string productGUID, string propertyName)
+        {
+            int len = 0;
+            MsiExitCodes result = MsiInterop.MsiGetProductInfo(productGUID, propertyName, null, ref len);
+            return result == MsiExitCodes.Success;
         }
     }
 }

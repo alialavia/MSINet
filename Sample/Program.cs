@@ -13,15 +13,8 @@ namespace Sample
         {
             foreach (var p in InstalledProduct.EnumerateInstalledProducts())
             {
-                try
-                {
-                    if (p.InstalledProductName.Contains("Word"))                     
-                        Console.Out.WriteLine("{0}\r\n-------------------------------------------------------------\r\n{1}", p.GUID, p.ToString());                    
-                }
-                catch (Exception ex)
-                {
-                    // Some products might throw an exception trying to access InstalledProductName propoerty.
-                }
+                if (p.InstalledProductName != null && p.InstalledProductName.Contains("Word"))
+                    Console.Out.WriteLine("{0}\r\n-------------------------------------------------------------\r\n{1}", p.GUID, p.ToString());
             }
         }
     }
