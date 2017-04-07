@@ -11,7 +11,7 @@ namespace Sample
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            foreach (var p in InstalledProduct.Enumerate())
+            foreach (var p in InstalledProduct.EnumerateInstalledProducts())
             {
                 try
                 {
