@@ -1,6 +1,6 @@
-﻿namespace MSINet
+﻿namespace MSINet.Interop
 {
-    public static class InstallProperty
+    public static class InstallPropertyNames
     {
         public static readonly string InstalledProductName = "InstalledProductName";
         public static readonly string VersionString = "VersionString";
