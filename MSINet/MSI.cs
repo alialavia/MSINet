@@ -9,10 +9,9 @@ namespace MSINet
         /// <summary>
         /// Enumerate all installed product GUIDs
         /// </summary>
-        /// <returns>A List of strings containing all GUIDs</returns>
-        public static List<string> EnumerateGUIDs()
+        /// <returns>An enumerator that returns all installed products GUIDs</returns>
+        public static IEnumerable<string> EnumerateGUIDs()
         {
-            var guidList = new List<string>();
             MsiExitCodes ret = 0;
             uint i = 0, dummy2 = 0;
             do
@@ -22,12 +21,12 @@ namespace MSINet
                 ret = MsiInterop.MsiEnumProductsEx(null, null, InstallContext.All, i, guid, out dummy1, null, ref dummy2);
                 if (ret == MsiExitCodes.Success)
                 {
-                    guidList.Add(guid);
+                    yield return guid;
                 }
                 i++;
             } while (ret != MsiExitCodes.NoMoreItems);
 
-            return guidList;
+            yield break;
         }
 
         /// <summary>
