@@ -74,6 +74,9 @@ namespace MSINet
                 return returnValue;
             }
 
+            // trim trailing \0
+            propertyValue = propertyValue.TrimEnd('\0');
+
             return MsiExitCodes.Success;
         }
 
