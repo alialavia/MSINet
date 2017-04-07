@@ -45,14 +45,12 @@ namespace MSINet
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var p in this.GetType().GetProperties())
-                try
-                {
-                    sb.AppendFormat("{0}:{1}\r\n", p.Name, p.GetValue(this));
-                }
-                catch
-                { }
-
+            if (!string.IsNullOrEmpty(InstalledProductName))
+            {
+                sb.Append(InstalledProductName);
+                sb.Append(" ");
+            }
+            sb.Append(_guid);
             return sb.ToString();
         }
 
