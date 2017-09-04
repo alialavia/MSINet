@@ -1,5 +1,6 @@
 ﻿using System;
 using MSINet;
+using System.Text;
 
 namespace Sample
 {
@@ -11,18 +12,24 @@ namespace Sample
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            foreach (var p in InstalledProduct.Enumerate())
+            foreach (var p in InstalledProduct.EnumerateInstalledProducts())
             {
+                Console.Out.WriteLine("{0}\r\n-------------------------------------------------------------\r\n{1}", p.GUID, PrintProduct(p));
+            }
+        }
+
+        static string PrintProduct(InstalledProduct product)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var p in product.GetType().GetProperties())
                 try
                 {
-                    if (p.InstalledProductName.Contains("Word"))                     
-                        Console.Out.WriteLine("{0}\r\n-------------------------------------------------------------\r\n{1}", p.GUID, p.ToString());                    
+                    sb.AppendFormat("{0}: {1}\r\n", p.Name, p.GetValue(product));
                 }
-                catch (Exception ex)
-                {
-                    // Some products might throw an exception trying to access InstalledProductName propoerty.
-                }
-            }
+                catch
+                { }
+
+            return sb.ToString();
         }
     }
 }

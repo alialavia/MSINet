@@ -1,14 +1,58 @@
-﻿using System;
+﻿using MSINet.Interop;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace MSINet
 {
     public class InstalledProduct
     {
-        public InstalledProduct(String GUID)
+        public InstalledProduct(Guid guid)
         {
-            this.GUID = GUID;
+            _guid = guid;
+        }
+
+        private readonly Guid _guid;
+        
+        public Guid GUID => _guid;
+        public string InstalledProductName => TryGetProperty(InstallPropertyNames.InstalledProductName);
+        public string VersionString => TryGetProperty(InstallPropertyNames.VersionString);
+        public string HelpLink => TryGetProperty(InstallPropertyNames.HelpLink);
+        public string HelpTelephone => TryGetProperty(InstallPropertyNames.HelpTelephone);
+        public string InstallLocation => TryGetProperty(InstallPropertyNames.InstallLocation);
+        public string InstallSource => TryGetProperty(InstallPropertyNames.InstallSource);
+        public DateTime? InstallDate => GetPropertyAsOrDefault<DateTime?>(InstallPropertyNames.InstallDate, (value) => DateTime.ParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture), null);
+        public string Publisher => TryGetProperty(InstallPropertyNames.Publisher);
+        public string LocalPackage => TryGetProperty(InstallPropertyNames.LocalPackage);
+        public string URLInfoAbout => TryGetProperty(InstallPropertyNames.URLInfoAbout);
+        public string URLUpdateInfo => TryGetProperty(InstallPropertyNames.URLUpdateInfo);
+        public int? VersionMinor => GetPropertyAsOrDefault<int?>(InstallPropertyNames.VersionMinor, (value) => int.Parse(value, CultureInfo.InvariantCulture), null);
+        public int? VersionMajor => GetPropertyAsOrDefault<int?>(InstallPropertyNames.VersionMajor, (value) => int.Parse(value, CultureInfo.InvariantCulture), null);
+        public string ProductID => TryGetProperty(InstallPropertyNames.ProductID);
+        public string RegCompany => TryGetProperty(InstallPropertyNames.RegCompany);
+        public string RegOwner => TryGetProperty(InstallPropertyNames.RegOwner);
+        public string Uninstallable => TryGetProperty(InstallPropertyNames.Uninstallable);
+        public string State => TryGetProperty(InstallPropertyNames.State);
+        public string PatchType => TryGetProperty(InstallPropertyNames.PatchType);
+        public string LUAEnabled => TryGetProperty(InstallPropertyNames.LUAEnabled);
+        public string DisplayName => TryGetProperty(InstallPropertyNames.DisplayName);
+        public string MoreInfoURL => TryGetProperty(InstallPropertyNames.MoreInfoURL);
+        public string LastUsedSource => TryGetProperty(InstallPropertyNames.LastUsedSource);
+        public string LastUsedType => TryGetProperty(InstallPropertyNames.LastUsedType);
+        public string MediaPackagePath => TryGetProperty(InstallPropertyNames.MediaPackagePath);
+        public string DiskPrompt => TryGetProperty(InstallPropertyNames.DiskPrompt);
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(InstalledProductName))
+            {
+                sb.Append(InstalledProductName);
+                sb.Append(" ");
+            }
+            sb.Append(_guid);
+            return sb.ToString();
         }
 
         /// <summary>
@@ -17,52 +61,28 @@ namespace MSINet
         /// <returns>
         /// An enumeration containing InstalledProducts
         /// </returns>
-        public static IEnumerable<InstalledProduct> Enumerate()
+        public static IEnumerable<InstalledProduct> EnumerateInstalledProducts()
         {
             foreach (var guid in MSI.EnumerateGUIDs())
+            {
                 yield return new InstalledProduct(guid);
+            }
         }
-        public readonly string GUID;
 
-        public string InstalledProductName { get { return MSI.getProperty(GUID, InstallProperty.InstalledProductName); } }
-        public string VersionString { get { return MSI.getProperty(GUID, InstallProperty.VersionString); } }
-        public string HelpLink { get { return MSI.getProperty(GUID, InstallProperty.HelpLink); } }
-        public string HelpTelephone { get { return MSI.getProperty(GUID, InstallProperty.HelpTelephone); } }
-        public string InstallLocation { get { return MSI.getProperty(GUID, InstallProperty.InstallLocation); } }
-        public string InstallSource { get { return MSI.getProperty(GUID, InstallProperty.InstallSource); } }
-        public string InstallDate { get { return MSI.getProperty(GUID, InstallProperty.InstallDate); } }
-        public string Publisher { get { return MSI.getProperty(GUID, InstallProperty.Publisher); } }
-        public string LocalPackage { get { return MSI.getProperty(GUID, InstallProperty.LocalPackage); } }
-        public string URLInfoAbout { get { return MSI.getProperty(GUID, InstallProperty.URLInfoAbout); } }
-        public string URLUpdateInfo { get { return MSI.getProperty(GUID, InstallProperty.URLUpdateInfo); } }
-        public string VersionMinor { get { return MSI.getProperty(GUID, InstallProperty.VersionMinor); } }
-        public string VersionMajor { get { return MSI.getProperty(GUID, InstallProperty.VersionMajor); } }
-        public string ProductID { get { return MSI.getProperty(GUID, InstallProperty.ProductID); } }
-        public string RegCompany { get { return MSI.getProperty(GUID, InstallProperty.RegCompany); } }
-        public string RegOwner { get { return MSI.getProperty(GUID, InstallProperty.RegOwner); } }
-        public string Uninstallable { get { return MSI.getProperty(GUID, InstallProperty.Uninstallable); } }
-        public string State { get { return MSI.getProperty(GUID, InstallProperty.State); } }
-        public string PatchType { get { return MSI.getProperty(GUID, InstallProperty.PatchType); } }
-        public string LUAEnabled { get { return MSI.getProperty(GUID, InstallProperty.LUAEnabled); } }
-        public string DisplayName { get { return MSI.getProperty(GUID, InstallProperty.DisplayName); } }
-        public string MoreInfoURL { get { return MSI.getProperty(GUID, InstallProperty.MoreInfoURL); } }
-        public string LastUsedSource { get { return MSI.getProperty(GUID, InstallProperty.LastUsedSource); } }
-        public string LastUsedType { get { return MSI.getProperty(GUID, InstallProperty.LastUsedType); } }
-        public string MediaPackagePath { get { return MSI.getProperty(GUID, InstallProperty.MediaPackagePath); } }
-        public string DiskPrompt { get { return MSI.getProperty(GUID, InstallProperty.DiskPrompt); } }
-
-        public override string ToString()
+        private string TryGetProperty(string propertyName)
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (var p in this.GetType().GetProperties())
-                try
-                {
-                    sb.AppendFormat("{0}:{1}\r\n", p.Name, p.GetValue(this));
-                }
-                catch
-                { }
+            string propertyValue;
+            if (MSI.TryGetProperty(_guid, propertyName, out propertyValue) != MsiExitCodes.Success)
+                propertyValue = null;
+            return propertyValue;
+        }
 
-            return sb.ToString();
+        public T GetPropertyAsOrDefault<T>(string propertyName, Func<string, T> process, T defaultValue)
+        {
+            string value = TryGetProperty(propertyName);
+            if (string.IsNullOrEmpty(value))
+                return defaultValue;
+            return process(value);
         }
     }
 }

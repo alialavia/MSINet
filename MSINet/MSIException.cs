@@ -1,32 +1,18 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using MSINet.Interop;
+using System;
 
 namespace MSINet
 {
     [Serializable]
     internal class MSIException : Exception
     {
-        private int returnValue;
+        private MsiExitCodes returnValue;
 
-        public MSIException()
-        {
-        }
-
-        public MSIException(string message) : base(message)
-        {
-        }
-
-        public MSIException(int returnValue) : this("MSIError : " + ((MsiExitCodes)returnValue).ToString())
+        public MSIException(MsiExitCodes returnValue) : base("MSIError : " + returnValue.ToString())
         {
             this.returnValue = returnValue;
         }
 
-        public MSIException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected MSIException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+        public MsiExitCodes ReturnValue => this.returnValue;
     }
 }
